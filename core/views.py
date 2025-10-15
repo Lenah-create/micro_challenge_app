@@ -13,11 +13,27 @@ from .serializers import (
     ProgressSerializer,
 )
 
+# -----------------------------
+# Challenge Form
+# -----------------------------
 class ChallengeForm(forms.ModelForm):
     class Meta:
         model = Challenge
-        
-        fields = ['title', 'description']  
+        fields = ['title', 'description', 'start_date', 'end_date']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter challenge title'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Describe your challenge'}),
+            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get('start_date')
+        end = cleaned_data.get('end_date')
+        if start and end and start > end:
+            raise forms.ValidationError("End date cannot be before start date.")
+        return cleaned_data
 
 
 # -----------------------------
@@ -71,19 +87,18 @@ def progress_view(request):
 
 
 # -----------------------------
-# Dashboard + Challenge Creation
+# Dashboard
 # -----------------------------
 @login_required
 def dashboard(request):
     user = request.user
-    challenges = Challenge.objects.filter(created_by=request.user)
+    challenges = Challenge.objects.filter(created_by=user)
     progress = Progress.objects.filter(user=user)
     emotions = EmotionLog.objects.filter(user=user).order_by('-timestamp')
     reminders = Reminder.objects.filter(user=user, active=True)
-    return render(request, 'core/dashboard.html', {'challenges': challenges})
 
     completed_days = progress.filter(completed=True).count()
-    total_days = 7  # fixed for your 7-day challenge
+    total_days = 7  # fixed for 7-day challenge
     completion_percentage = (completed_days / total_days) * 100 if total_days > 0 else 0
 
     context = {
@@ -99,12 +114,6 @@ def dashboard(request):
 # -----------------------------
 # Add Challenge Form (Frontend)
 # -----------------------------
-class ChallengeForm(forms.ModelForm):
-    class Meta:
-        model = Challenge
-        fields = ['title', 'description', 'start_date', 'end_date']
-
-
 @login_required
 def create_challenge(request):
     if request.method == 'POST':
@@ -146,6 +155,7 @@ def login_view(request):
     return render(request, 'core/login.html', {'form': form})
 
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect('login')

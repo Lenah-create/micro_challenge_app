@@ -17,25 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from core.views import ( # type: ignore
+from core.views import (  # type: ignore
     ChallengeViewSet,
     ReminderViewSet,
     EmotionLogViewSet,
     ProgressViewSet,
 )
 
-# Django REST Framework router for API endpoints
+# ---------------- Django REST Framework router ----------------
 router = routers.DefaultRouter()
 router.register(r'challenges', ChallengeViewSet, basename='challenge')
 router.register(r'reminders', ReminderViewSet, basename='reminder')
 router.register(r'emotions', EmotionLogViewSet, basename='emotion')
 router.register(r'progress', ProgressViewSet, basename='progress')
 
+# ---------------- URL Patterns ----------------
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),  # API routes
-    path('', include('core.urls')),      # Frontend (HTML templates)
-    path('challenges/', include('core.urls')), 
+    path('admin/', admin.site.urls),        # Admin panel
+    path('api/', include(router.urls)),     # API endpoints
+    path('', include('core.urls')),         # Frontend HTML templates
 ]
-
-

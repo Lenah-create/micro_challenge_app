@@ -24,7 +24,7 @@ urlpatterns = [
     path('reminders/', views.reminder_list, name='reminder_list'),
     path('progress/', views.progress_view, name='progress_view'),
     path('create/', views.create_challenge, name='create_challenge'),
-
+    path('dashboard/', views.dashboard, name='dashboard'),
     # API
     path('api/', include(router.urls)),
 ]

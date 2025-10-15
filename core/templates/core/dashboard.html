@@ -1,10 +1,102 @@
-<h1>Welcome, {{ request.user.username }}</h1>
-<a href="{% url 'create_challenge' %}">Add Challenge</a>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f9f9f9;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .dashboard-container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .challenge-list {
+            margin-top: 30px;
+        }
+        .challenge-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .challenge-card h3 {
+            margin: 0;
+            color: #444;
+        }
+        .challenge-card p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .top-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        ul.challenge-simple {
+            list-style: none;
+            padding: 0;
+        }
+        ul.challenge-simple li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="top-actions">
+            <h1>Welcome, {{ request.user.username }}</h1>
+            <a href="{% url 'logout' %}" class="btn">Logout</a>
+        </div>
 
-<ul>
-  {% for challenge in challenges %}
-    <li>{{ challenge.title }} - {{ challenge.description }}</li>
-  {% empty %}
-    <li>No challenges yet!</li>
-  {% endfor %}
-</ul>
+        <a href="{% url 'create_challenge' %}" class="btn">Add Challenge</a>
+
+        <!-- Card style list -->
+        <div class="challenge-list">
+            {% if challenges %}
+                {% for challenge in challenges %}
+                    <div class="challenge-card">
+                        <h3>{{ challenge.title }}</h3>
+                        <p>{{ challenge.description }}</p>
+                        {% if challenge.start_date and challenge.end_date %}
+                            <p>Start: {{ challenge.start_date }} | End: {{ challenge.end_date }}</p>
+                        {% endif %}
+                        <p>Created by: {{ challenge.created_by.username }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No challenges yet. Click “Add Challenge” to start your first one!</p>
+            {% endif %}
+        </div>
+
+        <!-- Simple list -->
+        <h2>Quick List</h2>
+        <ul class="challenge-simple">
+            {% for challenge in challenges %}
+                <li>{{ challenge.title }} - {{ challenge.description }}</li>
+            {% empty %}
+                <li>No challenges yet!</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
