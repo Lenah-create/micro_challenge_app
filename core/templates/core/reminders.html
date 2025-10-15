@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Reminders</title></head>
+<body>
+    <h1>Reminders</h1>
+    {% for reminder in reminders %}
+        <p>Challenge: {{ reminder.challenge.title }} - Time: {{ reminder.remind_time }}</p>
+    {% empty %}
+        <p>No reminders yet.</p>
+    {% endfor %}
+    <a href="/">Back Home</a>
+</body>
+</html>

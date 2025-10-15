@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Emotion Logs</title></head>
+<body>
+    <h1>Emotion Logs</h1>
+    {% for emotion in emotions %}
+        <p>{{ emotion.emotion_type }} - Intensity: {{ emotion.intensity }}</p>
+    {% empty %}
+        <p>No emotion logs yet.</p>
+    {% endfor %}
+    <a href="/">Back Home</a>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Challenges</title>
+</head>
+<body>
+    <h1>All Challenges</h1>
+    {% for challenge in challenges %}
+        <div>
+            <h3>{{ challenge.title }}</h3>
+            <p>{{ challenge.description }}</p>
+            <p>Duration: {{ challenge.duration_seconds }} seconds</p>
+        </div>
+    {% empty %}
+        <p>No challenges available yet.</p>
+    {% endfor %}
+    <a href="/">Back Home</a>
+</body>
+</html>

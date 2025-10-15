@@ -1,17 +1,17 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 User = settings.AUTH_USER_MODEL  # Django's built-in user model
 
 
 class Challenge(models.Model):
-    title = models.CharField(max_length=200)  # short name for the micro-challenge
-    description = models.TextField(blank=True)  # optional details/instructions
-    duration_seconds = models.PositiveIntegerField(default=60)  # 30, 60, 120 seconds, etc.
-    created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='challenges'
-    )
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

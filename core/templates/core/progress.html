@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Progress</title></head>
+<body>
+    <h1>Progress</h1>
+    {% for item in progress %}
+        <p>Challenge: {{ item.challenge.title }} - Completed: {{ item.completed }}</p>
+    {% empty %}
+        <p>No progress entries yet.</p>
+    {% endfor %}
+    <a href="/">Back Home</a>
+</body>
+</html>

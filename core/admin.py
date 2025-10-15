@@ -3,8 +3,13 @@ from .models import Challenge, Reminder, EmotionLog, Progress
 
 @admin.register(Challenge)
 class ChallengeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'created_by', 'created_at')
+    list_display = ('title', 'created_by', 'duration_seconds', 'created_at')
     search_fields = ('title', 'description')
+    def duration_seconds(self, obj):
+        if obj.start_date and obj.end_date:
+            return (obj.end_date - obj.start_date).days * 24 * 3600
+        return "-"
+    duration_seconds.short_description = 'Duration (seconds)'
 
 @admin.register(Reminder)
 class ReminderAdmin(admin.ModelAdmin):
@@ -14,9 +19,9 @@ class ReminderAdmin(admin.ModelAdmin):
 @admin.register(EmotionLog)
 class EmotionLogAdmin(admin.ModelAdmin):
     list_display = ('user', 'emotion_type', 'intensity', 'created_at')
-    list_filter = ('emotion_type',)
+    search_fields = ('emotion_type', 'note')
 
 @admin.register(Progress)
 class ProgressAdmin(admin.ModelAdmin):
     list_display = ('user', 'challenge', 'date', 'completed')
-    list_filter = ('completed',)
+    list_filter = ('completed', 'date')

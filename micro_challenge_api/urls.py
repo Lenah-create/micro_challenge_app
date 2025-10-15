@@ -24,6 +24,7 @@ from core.views import ( # type: ignore
     ProgressViewSet,
 )
 
+# Django REST Framework router for API endpoints
 router = routers.DefaultRouter()
 router.register(r'challenges', ChallengeViewSet, basename='challenge')
 router.register(r'reminders', ReminderViewSet, basename='reminder')
@@ -32,6 +33,9 @@ router.register(r'progress', ProgressViewSet, basename='progress')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('api/', include(router.urls)),  # API routes
+    path('', include('core.urls')),      # Frontend (HTML templates)
+    path('challenges/', include('core.urls')), 
 ]
+
 
