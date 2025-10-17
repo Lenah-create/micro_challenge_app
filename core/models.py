@@ -25,12 +25,12 @@ class Reminder(models.Model):
     challenge = models.ForeignKey(
         Challenge, on_delete=models.CASCADE, related_name='reminders'
     )
-    remind_time = models.TimeField()  # user-chosen time of day (HH:MM:SS)
+    remind_time = models.TimeField()  # required
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Reminder for {self.challenge.title} at {self.remind_time}"
+        return f"Reminder for {self.user.username} - {self.challenge.title} at {self.remind_time}"
 
 
 class EmotionLog(models.Model):
@@ -68,6 +68,14 @@ class Progress(models.Model):
 
     class Meta:
         unique_together = ('user', 'challenge', 'date')  # one record per user/challenge/day
+
+class Session(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    duration = models.IntegerField()  # in seconds
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.duration}s session"
 
     def __str__(self):
         status = "Completed" if self.completed else "Pending"

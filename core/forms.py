@@ -1,5 +1,6 @@
 from django import forms
 from .models import Challenge
+from .models import Reminder
 
 class ChallengeForm(forms.ModelForm):
     title = forms.CharField(
@@ -45,3 +46,8 @@ class ChallengeForm(forms.ModelForm):
         if start and end and start > end:
             raise forms.ValidationError("End date cannot be before start date.")
         return cleaned_data
+    
+class ReminderForm(forms.ModelForm):
+    class Meta:
+        model = Reminder
+        fields = ['challenge', 'remind_time', 'active']

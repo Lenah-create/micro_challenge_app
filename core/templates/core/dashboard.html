@@ -1,102 +1,240 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f9f9f9;
-            padding: 40px;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .dashboard-container {
-            max-width: 800px;
-            margin: auto;
-        }
-        .challenge-list {
-            margin-top: 30px;
-        }
-        .challenge-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .challenge-card h3 {
-            margin: 0;
-            color: #444;
-        }
-        .challenge-card p {
-            margin: 5px 0;
-            color: #666;
-        }
-        .btn {
-            display: inline-block;
-            background: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            margin-top: 10px;
-        }
-        .btn:hover {
-            background: #45a049;
-        }
-        .top-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        ul.challenge-simple {
-            list-style: none;
-            padding: 0;
-        }
-        ul.challenge-simple li {
-            padding: 5px 0;
-            border-bottom: 1px solid #ddd;
-        }
-    </style>
+  <title>Be Now – Dashboard</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #f5f9ff, #e3f3f0);
+      padding: 40px;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    .dashboard-container {
+      max-width: 900px;
+      margin: auto;
+    }
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .btn:hover { background: #45a049; }
+
+    /* Breathing Section */
+    .breathing-section {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .sessions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+    .session {
+      background: #f8fff8;
+      border-radius: 15px;
+      padding: 20px;
+      width: 180px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .session:hover { transform: scale(1.05); }
+    .session h3 { color: #4CAF50; margin-bottom: 8px; }
+
+    #breathing-circle {
+      margin: 40px auto;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(76, 175, 80, 0.3);
+      animation: breathe 8s ease-in-out infinite;
+      display: none;
+    }
+
+    @keyframes breathe {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+
+    /* Challenges */
+    .challenge-section {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+    .challenge-section h2 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    .challenge-card {
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    }
+    .challenge-card h3 { margin: 0; color: #4CAF50; }
+    .challenge-card p { margin: 5px 0; color: #666; }
+
+    /* Reminder Section */
+    .reminder-section {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .reminder-section input {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <div class="top-actions">
-            <h1>Welcome, {{ request.user.username }}</h1>
-            <a href="{% url 'logout' %}" class="btn">Logout</a>
-        </div>
-
-        <a href="{% url 'create_challenge' %}" class="btn">Add Challenge</a>
-
-        <!-- Card style list -->
-        <div class="challenge-list">
-            {% if challenges %}
-                {% for challenge in challenges %}
-                    <div class="challenge-card">
-                        <h3>{{ challenge.title }}</h3>
-                        <p>{{ challenge.description }}</p>
-                        {% if challenge.start_date and challenge.end_date %}
-                            <p>Start: {{ challenge.start_date }} | End: {{ challenge.end_date }}</p>
-                        {% endif %}
-                        <p>Created by: {{ challenge.created_by.username }}</p>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>No challenges yet. Click “Add Challenge” to start your first one!</p>
-            {% endif %}
-        </div>
-
-        <!-- Simple list -->
-        <h2>Quick List</h2>
-        <ul class="challenge-simple">
-            {% for challenge in challenges %}
-                <li>{{ challenge.title }} - {{ challenge.description }}</li>
-            {% empty %}
-                <li>No challenges yet!</li>
-            {% endfor %}
-        </ul>
+  <div class="dashboard-container">
+    <div class="top-actions">
+      <h1>Welcome, {{ request.user.username }}</h1>
+      <a href="{% url 'logout' %}" class="btn">Logout</a>
     </div>
+
+    <!-- Breathing Section -->
+    <div class="breathing-section">
+      <h2>Be in the Presence. Be Now.</h2>
+      <p>Select your daily grounding session:</p>
+
+      <div class="sessions">
+        <div class="session" onclick="startSession(30)">
+          <h3>30 Seconds</h3>
+          <p>Quick Calm</p>
+        </div>
+        <div class="session" onclick="startSession(60)">
+          <h3>60 Seconds</h3>
+          <p>Find Balance</p>
+        </div>
+        <div class="session" onclick="startSession(90)">
+          <h3>90 Seconds</h3>
+          <p>Deep Stillness</p>
+        </div>
+        <div class="session" onclick="startSession(180)">
+          <h3>180 Seconds</h3>
+          <p>Total Presence</p>
+        </div>
+      </div>
+
+      <div id="breathing-circle"></div>
+      <p id="timer-text"></p>
+    </div>
+
+    <!-- Challenge Section -->
+    <div class="challenge-section">
+      <div class="top-actions" style="margin-bottom:15px;">
+        <h2>Your Micro Challenges</h2>
+        <a href="{% url 'create_challenge' %}" class="btn">Add Challenge</a>
+      </div>
+
+      {% if challenges %}
+        {% for challenge in challenges %}
+  <div class="challenge-card">
+    <h3>{{ challenge.title }}</h3>
+    <p>{{ challenge.description }}</p>
+    <p><small>Created by: {{ challenge.created_by.username }}</small></p>
+
+    <form method="POST" action="{% url 'set_reminder' challenge.id %}">
+      {% csrf_token %}
+      <label>Set reminder time:</label>
+      <input type="time" name="remind_time" required>
+      <button type="submit" class="btn">Save Reminder</button>
+    </form>
+  </div>
+{% endfor %}
+
+      {% else %}
+        <p>No challenges yet! Create your first one.</p>
+      {% endif %}
+    </div>
+
+    <!-- Reminder Section -->
+    <div class="reminder-section">
+      <h2>Set a Challenge Reminder</h2>
+      <p>Select a time to be reminded to do your challenge today.</p>
+      <input type="time" id="reminderTime">
+      <button class="btn" onclick="setReminder()">Set Reminder</button>
+      <p id="reminderStatus" style="margin-top:10px; color:#4CAF50;"></p>
+    </div>
+  </div>
+
+  <script>
+    // Breathing Timer
+    function startSession(duration) {
+      const circle = document.getElementById('breathing-circle');
+      const text = document.getElementById('timer-text');
+      circle.style.display = 'block';
+      let remaining = duration;
+      text.innerText = `Breathe deeply... ${remaining}s`;
+
+      const timer = setInterval(() => {
+        remaining--;
+        if (remaining > 0) {
+          text.innerText = `Breathe... ${remaining}s`;
+        } else {
+          clearInterval(timer);
+          text.innerText = "Session complete. Feel the calm.";
+          circle.style.display = 'none';
+        }
+      }, 1000);
+    }
+
+   
+      const now = new Date();
+      const [hours, minutes] = timeInput.split(":");
+      const reminderTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+      const delay = reminderTime - now;
+
+      if (delay <= 0) {
+        alert("That time has already passed today. Try a future time.");
+        return;
+      }
+
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          document.getElementById('reminderStatus').innerText = `Reminder set for ${timeInput}`;
+          saveReminderToBackend(timeInput);
+
+          setTimeout(() => {
+            new Notification("Be Now Reminder", {
+              body: "Time to complete your Be Now challenge.",
+              icon: "https://cdn-icons-png.flaticon.com/512/2917/2917242.png"
+            });
+          }, delay);
+        } else {
+          alert("Please allow notifications for reminders to work.");
+        }
+      });
+</script>
 </body>
 </html>

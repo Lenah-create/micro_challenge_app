@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect
+from django.core.checks import messages
+from django.shortcuts import get_object_or_404, render, redirect
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django import forms
+from .forms import ChallengeForm, ReminderForm
+from .models import Challenge
 
 from .models import Challenge, Reminder, EmotionLog, Progress
 from .serializers import (
@@ -94,12 +97,23 @@ def dashboard(request):
     user = request.user
     challenges = Challenge.objects.filter(created_by=user)
     progress = Progress.objects.filter(user=user)
-    emotions = EmotionLog.objects.filter(user=user).order_by('-timestamp')
+    emotions = EmotionLog.objects.filter(user=user).order_by('-created_at')
     reminders = Reminder.objects.filter(user=user, active=True)
+    form = ReminderForm()
 
+    # Calculate challenge completion
     completed_days = progress.filter(completed=True).count()
-    total_days = 7  # fixed for 7-day challenge
+    total_days = 7  # assuming a 7-day challenge
     completion_percentage = (completed_days / total_days) * 100 if total_days > 0 else 0
+
+    # Handle reminder form submission
+    if request.method == "POST":
+        form = ReminderForm(request.POST)
+        if form.is_valid():
+            reminder = form.save(commit=False)
+            reminder.user = user
+            reminder.save()
+            return redirect("dashboard")
 
     context = {
         "challenges": challenges,
@@ -107,9 +121,10 @@ def dashboard(request):
         "emotions": emotions,
         "reminders": reminders,
         "completion_percentage": completion_percentage,
+        "form": form,
     }
-    return render(request, "core/dashboard.html", context)
 
+    return render(request, "core/dashboard.html", context)
 
 # -----------------------------
 # Add Challenge Form (Frontend)
@@ -125,7 +140,29 @@ def create_challenge(request):
             return redirect('dashboard')
     else:
         form = ChallengeForm()
-    return render(request, 'core/add_challenge.html', {'form': form})
+    return render(request, 'core/create_challenge.html', {'form': form})
+
+@login_required
+def set_reminder(request, challenge_id):
+    challenge = get_object_or_404(Challenge, id=challenge_id)
+
+    if request.method == "POST":
+        remind_time = request.POST.get("remind_time")
+        print("DEBUG remind_time:", remind_time)
+        if not remind_time:
+            messages.error(request, "Please select a reminder time.")
+            return redirect("dashboard")
+
+        Reminder.objects.create(
+            user=request.user,
+            challenge=challenge,
+            remind_time=remind_time
+        )
+
+        messages.success(request, "Reminder set successfully!")
+        return redirect("dashboard")
+
+    return redirect("dashboard")
 
 
 # -----------------------------
@@ -138,6 +175,9 @@ def signup_view(request):
             user = form.save()
             login(request, user)
             return redirect('dashboard')
+        else:
+            # Show why it failed
+            print(form.errors)
     else:
         form = UserCreationForm()
     return render(request, 'core/signup.html', {'form': form})
@@ -159,3 +199,15 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+@login_required
+def set_reminder(request, challenge_id):
+    if request.method == 'POST':
+        remind_time = request.POST.get('remind_time')
+        challenge = get_object_or_404(Challenge, id=challenge_id)
+        Reminder.objects.create(
+            user=request.user,
+            challenge=challenge,
+            remind_time=remind_time
+        )
+    return redirect('dashboard')
