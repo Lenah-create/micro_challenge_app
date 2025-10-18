@@ -8,6 +8,7 @@ User = settings.AUTH_USER_MODEL  # Django's built-in user model
 class Challenge(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
+    duration_seconds = models.IntegerField(default=0)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
