@@ -2,12 +2,14 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from . import views
+from .views import UserViewSet
 
 router = routers.DefaultRouter()
 router.register(r'challenges', views.ChallengeViewSet)
 router.register(r'reminders', views.ReminderViewSet)
 router.register(r'emotions', views.EmotionLogViewSet)
 router.register(r'progress', views.ProgressViewSet)
+router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

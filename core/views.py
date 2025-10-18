@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from .forms import ChallengeForm, ReminderForm
 from .models import Challenge
+from django.contrib.auth.models import User
 
 from .models import Challenge, Reminder, EmotionLog, Progress
 from .serializers import (
@@ -14,7 +15,12 @@ from .serializers import (
     ReminderSerializer,
     EmotionLogSerializer,
     ProgressSerializer,
+    UserSerializer
 )
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 # -----------------------------
 # Challenge Form
