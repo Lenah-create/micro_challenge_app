@@ -94,7 +94,9 @@ def progress_view(request):
     progress = Progress.objects.all()
     return render(request, 'core/progress.html', {'progress': progress})
 
-
+def perform_create(self, serializer):
+    serializer.save(created_by=self.request.user)
+    
 # -----------------------------
 # Dashboard
 # -----------------------------
