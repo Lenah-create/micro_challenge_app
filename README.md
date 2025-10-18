@@ -41,7 +41,6 @@ This project demonstrates backend development skills including:
 | `/api/users/`                | GET          | List all users                          |
 | `/api/users/<id>/`           | GET          | Retrieve a single user                  |
 
-> Note: Endpoints are accessible via the **browsable API** or tools like **Postman**.
 
 ---
 
