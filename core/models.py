@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 
 User = settings.AUTH_USER_MODEL  # Django's built-in user model
 
@@ -25,7 +24,7 @@ class Reminder(models.Model):
     challenge = models.ForeignKey(
         Challenge, on_delete=models.CASCADE, related_name='reminders'
     )
-    remind_time = models.TimeField()  # required
+    remind_time = models.TimeField()
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -38,10 +37,8 @@ class EmotionLog(models.Model):
         User, on_delete=models.CASCADE, related_name='emotion_logs'
     )
     emotion_type = models.CharField(max_length=50)  # e.g., sad, anxious, tired
-    intensity = models.PositiveSmallIntegerField(
-        null=True, blank=True
-    )  # 1..10
-    note = models.TextField(blank=True)  # optional note
+    intensity = models.PositiveSmallIntegerField(null=True, blank=True)  # 1..10
+    note = models.TextField(blank=True)
     related_challenge = models.ForeignKey(
         Challenge,
         null=True,
@@ -52,7 +49,7 @@ class EmotionLog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.emotion_type} ({self.intensity or '-'} / 10)"
+        return f"{self.emotion_type} ({self.intensity or '-'}/10)"
 
 
 class Progress(models.Model):
@@ -67,7 +64,8 @@ class Progress(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'challenge', 'date')  # one record per user/challenge/day
+        unique_together = ('user', 'challenge', 'date')
+
 
 class Session(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -76,7 +74,3 @@ class Session(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.duration}s session"
-
-    def __str__(self):
-        status = "Completed" if self.completed else "Pending"
-        return f"{self.challenge.title} - {status} ({self.date})"

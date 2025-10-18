@@ -2,13 +2,11 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Challenge, Reminder, EmotionLog, Progress
 
-
-# --- USER SERIALIZER (for displaying user info) ---
+# --- USER SERIALIZER ---
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
-
 
 # --- CHALLENGE SERIALIZER ---
 class ChallengeSerializer(serializers.ModelSerializer):
@@ -17,7 +15,6 @@ class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
         fields = ['id', 'title', 'description', 'duration_seconds', 'created_by', 'created_at']
-
 
 # --- REMINDER SERIALIZER ---
 class ReminderSerializer(serializers.ModelSerializer):
@@ -28,7 +25,6 @@ class ReminderSerializer(serializers.ModelSerializer):
         model = Reminder
         fields = ['id', 'user', 'challenge', 'remind_time', 'active', 'created_at']
 
-
 # --- EMOTION LOG SERIALIZER ---
 class EmotionLogSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -37,7 +33,6 @@ class EmotionLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmotionLog
         fields = ['id', 'user', 'emotion_type', 'intensity', 'note', 'related_challenge', 'created_at']
-
 
 # --- PROGRESS SERIALIZER ---
 class ProgressSerializer(serializers.ModelSerializer):
